@@ -1,11 +1,11 @@
 package com.simongirard.petclinic.bootstrap;
 
 import com.simongirard.petclinic.model.Owner;
+import com.simongirard.petclinic.model.PetType;
 import com.simongirard.petclinic.model.Vet;
 import com.simongirard.petclinic.services.OwnerService;
+import com.simongirard.petclinic.services.PetTypeService;
 import com.simongirard.petclinic.services.VetService;
-import com.simongirard.petclinic.services.map.OwnerMapService;
-import com.simongirard.petclinic.services.map.VetMapService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +14,30 @@ public class DataLoader implements CommandLineRunner
 {
     private final OwnerService ownerService;
     private final VetService vetService;
+    private final PetTypeService petTypeService;
 
-    public DataLoader(OwnerService ownerService, VetService vetService) {
+    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService) {
         this.ownerService = ownerService;
         this.vetService = vetService;
+        this.petTypeService = petTypeService;
     }
 
     @Override
     public void run(String... args) {
+
+        PetType dog = new PetType();
+        dog.setName("Dog");
+        PetType cat = new PetType();
+        cat.setName("Cat");
+        PetType lion = new PetType();
+        lion.setName("Lion");
+        PetType tiger = new PetType();
+        tiger.setName("Tiger");
+
+        petTypeService.save(dog);
+        petTypeService.save(cat);
+        petTypeService.save(lion);
+        petTypeService.save(tiger);
 
         Owner owner1 = new Owner();
         owner1.setFirstName("Simon");
