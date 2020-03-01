@@ -5,10 +5,12 @@ import com.simongirard.petclinic.model.Pet;
 import com.simongirard.petclinic.model.PetType;
 import com.simongirard.petclinic.model.Speciality;
 import com.simongirard.petclinic.model.Vet;
+import com.simongirard.petclinic.model.Visit;
 import com.simongirard.petclinic.services.OwnerService;
 import com.simongirard.petclinic.services.PetTypeService;
 import com.simongirard.petclinic.services.SpecialityService;
 import com.simongirard.petclinic.services.VetService;
+import com.simongirard.petclinic.services.VisitService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -21,12 +23,14 @@ public class DataLoader implements CommandLineRunner
     private final VetService vetService;
     private final PetTypeService petTypeService;
     private final SpecialityService specialityService;
+    private final VisitService visitService;
 
-    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService, SpecialityService specialityService) {
+    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService, SpecialityService specialityService, VisitService visitService) {
         this.ownerService = ownerService;
         this.vetService = vetService;
         this.petTypeService = petTypeService;
         this.specialityService = specialityService;
+        this.visitService = visitService;
     }
 
     @Override
@@ -98,6 +102,14 @@ public class DataLoader implements CommandLineRunner
         owner2.getPets().add(pet2);
 
         ownerService.save(owner2);
+
+
+        Visit visit1 = new Visit();
+        visit1.setPet(pet1);
+        visit1.setDate(LocalDate.now());
+        visit1.setDescription("The lion is too dangerous");
+
+        visitService.save(visit1);
 
         Vet vet1 = new Vet();
         vet1.setFirstName("Pierre");
