@@ -32,7 +32,7 @@ public class VetMapService extends AbstractMapService<Vet, Long> implements VetS
     @Override
     public Vet save(Vet vet) {
 
-        if(vet.getSpecialities().size() > 0) {
+        if(vet.getSpecialities() != null && vet.getSpecialities().size() > 0) {
            vet.getSpecialities().forEach(speciality -> {
                if(speciality.getId() == null) {
                    Speciality savedSpeciality = specialityService.save(speciality);
@@ -56,6 +56,10 @@ public class VetMapService extends AbstractMapService<Vet, Long> implements VetS
 
     @Override
     public Vet findByLastName(String lastName) {
-        return null;
+        return this.findAll()
+                .stream()
+                .filter(vet -> vet.getLastName().equalsIgnoreCase(lastName))
+                .findFirst()
+                .orElse(null);
     }
 }

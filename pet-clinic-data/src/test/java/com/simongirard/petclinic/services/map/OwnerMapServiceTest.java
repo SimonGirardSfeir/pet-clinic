@@ -1,6 +1,8 @@
 package com.simongirard.petclinic.services.map;
 
 import com.simongirard.petclinic.model.Owner;
+import com.simongirard.petclinic.model.Pet;
+import com.simongirard.petclinic.model.PetType;
 import com.simongirard.petclinic.services.PetService;
 import com.simongirard.petclinic.services.PetTypeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 class OwnerMapServiceTest {
 
@@ -64,6 +68,49 @@ class OwnerMapServiceTest {
         Owner savedOwner = ownerMapService.save(Owner.builder().build());
         assertNotNull(savedOwner);
         assertNotNull(savedOwner.getId());
+    }
+
+    @Test
+    void saveOwnerWithPetWithoutPetType() {
+        Pet pet = Pet.builder().id(1L).build();
+
+        Set<Pet> pets = new HashSet<>();
+        pets.add(pet);
+
+        assertThrows(RuntimeException.class, () -> ownerMapService.save(Owner.builder().pets(pets).build()));
+    }
+
+    @Test
+    void saveOwnerWithPetWithPetTypeWithNoId() {
+        Pet pet = Pet.builder().id(1L).build();
+        PetType petType = PetType.builder().build();
+        pet.setPetType(petType);
+
+        Set<Pet> pets = new HashSet<>();
+        pets.add(pet);
+
+        when(petTypeService.save(petType)).thenReturn(PetType.builder().id(1L).build());
+
+        assertEquals(1L, ownerMapService.save(Owner.builder().pets(pets).build()).getPets().iterator().next().getPetType().getId());
+    }
+
+    @Test
+    void saveOWnerWithPetWithNoId() {
+        Pet pet = Pet.builder().build();
+        PetType petType = PetType.builder().build();
+        pet.setPetType(petType);
+
+        Set<Pet> pets = new HashSet<>();
+        pets.add(pet);
+
+        when(petService.save(pet)).thenReturn(Pet.builder().id(1L).build());
+
+        assertEquals(1L, ownerMapService.save(Owner.builder().pets(pets).build()).getPets().iterator().next().getId());
+    }
+
+    @Test
+    void saveNullOwner() {
+        assertNull(ownerMapService.save(null));
     }
 
     @Test

@@ -21,10 +21,16 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "pet")
 public class Pet extends BaseEntity {
+
+    @Builder
+    public Pet(Long id, String name, PetType petType) {
+        super(id);
+        this.name = name;
+        this.petType = petType;
+    }
 
     @Column(name = "name")
     private String name;
