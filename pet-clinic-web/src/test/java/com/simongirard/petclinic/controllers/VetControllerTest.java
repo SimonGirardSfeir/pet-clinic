@@ -47,7 +47,7 @@ class VetControllerTest {
     void listVets() throws Exception {
         when(vetService.findAll()).thenReturn(vets);
 
-        mockMvc.perform(get("/vets"))
+        mockMvc.perform(get("/vets/index.html"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("vets/index"))
                 .andExpect(model().attribute("vets", hasSize(1)));
