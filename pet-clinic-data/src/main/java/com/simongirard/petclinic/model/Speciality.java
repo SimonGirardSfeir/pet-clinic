@@ -13,17 +13,12 @@ import javax.persistence.Table;
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "speciality")
-public class Speciality extends BaseEntity {
+public class Speciality extends NamedEntity {
 
     @Builder
-    public Speciality(Long id, String description) {
-        super(id);
-        this.description = description;
+    public Speciality(Long id, String name) {
+        super(id, name);
     }
-
-    @Column(name = "description")
-    private String description;
 }
