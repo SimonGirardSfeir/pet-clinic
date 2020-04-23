@@ -3,6 +3,7 @@ package com.simongirard.petclinic.services.springdatajpa;
 import com.simongirard.petclinic.model.Visit;
 import com.simongirard.petclinic.repositories.VisitRepository;
 import com.simongirard.petclinic.services.VisitService;
+import javassist.NotFoundException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +30,8 @@ public class VisitJpaService implements VisitService {
     }
 
     @Override
-    public Visit findById(Long id) {
-        return visitRepository.findById(id).orElse(null);
+    public Visit findById(Long id) throws NotFoundException {
+        return visitRepository.findById(id).orElseThrow(() -> new NotFoundException("Visit not found. Visit id: " + id));
     }
 
     @Override

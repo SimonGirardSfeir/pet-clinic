@@ -2,6 +2,7 @@ package com.simongirard.petclinic.services.springdatajpa;
 
 import com.simongirard.petclinic.model.PetType;
 import com.simongirard.petclinic.repositories.PetTypeRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +53,7 @@ class PetTypeJpaServiceTest {
     }
 
     @Test
-    void findById() {
+    void findById() throws NotFoundException {
         when(petTypeRepository.findById(anyLong())).thenReturn(Optional.of(petType));
 
         PetType petTypeFound = petTypeJpaService.findById(petTypeId);
@@ -67,9 +68,7 @@ class PetTypeJpaServiceTest {
     void findByIdNotFound() {
         when(petTypeRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        PetType petTypeFound = petTypeJpaService.findById(petTypeId);
-
-        assertNull(petTypeFound);
+        assertThrows(NotFoundException.class, () -> petTypeJpaService.findById(petTypeId));
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.simongirard.petclinic.model.Pet;
 import com.simongirard.petclinic.model.Visit;
 import com.simongirard.petclinic.services.PetService;
 import com.simongirard.petclinic.services.VisitService;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +34,7 @@ public class VisitController {
     }
 
     @ModelAttribute("visit")
-    public Visit loadPetWithVisit(@PathVariable String petId, Model model) {
+    public Visit loadPetWithVisit(@PathVariable String petId, Model model) throws NotFoundException {
         Pet pet = petService.findById(Long.parseLong(petId));
         model.addAttribute("pet", pet);
         Visit visit = Visit.builder().build();

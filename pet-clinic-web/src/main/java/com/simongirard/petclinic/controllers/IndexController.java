@@ -14,6 +14,6 @@ public class IndexController {
     @GetMapping("/oups")
     public String oups() {
 
-        return "notimplemented";
+        return "error";
     }
 }

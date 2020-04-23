@@ -5,6 +5,7 @@ import com.simongirard.petclinic.model.Pet;
 import com.simongirard.petclinic.model.PetType;
 import com.simongirard.petclinic.services.PetService;
 import com.simongirard.petclinic.services.VisitService;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +45,7 @@ class VisitControllerTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NotFoundException {
         Owner owner = Owner.builder().id(1L).lastName("Girard").firstName("Simon").build();
         PetType petType = PetType.builder().id(1L).name("Dog").build();
 

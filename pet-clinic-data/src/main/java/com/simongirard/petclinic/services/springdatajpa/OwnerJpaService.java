@@ -3,6 +3,7 @@ package com.simongirard.petclinic.services.springdatajpa;
 import com.simongirard.petclinic.model.Owner;
 import com.simongirard.petclinic.repositories.OwnerRepository;
 import com.simongirard.petclinic.services.OwnerService;
+import javassist.NotFoundException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +42,8 @@ public class OwnerJpaService implements OwnerService {
     }
 
     @Override
-    public Owner findById(Long id) {
-        return ownerRepository.findById(id).orElse(null);
+    public Owner findById(Long id) throws NotFoundException {
+        return ownerRepository.findById(id).orElseThrow(() -> new NotFoundException("Owner not found. Owner id: " + id));
     }
 
     @Override

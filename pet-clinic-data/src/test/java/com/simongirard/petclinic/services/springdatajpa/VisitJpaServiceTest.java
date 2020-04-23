@@ -2,6 +2,7 @@ package com.simongirard.petclinic.services.springdatajpa;
 
 import com.simongirard.petclinic.model.Visit;
 import com.simongirard.petclinic.repositories.VisitRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +52,7 @@ class VisitJpaServiceTest {
     }
 
     @Test
-    void findById() {
+    void findById() throws NotFoundException {
         when(visitRepository.findById(anyLong())).thenReturn(Optional.of(visit));
 
         Visit visitReturn = visitJpaService.findById(visitId);
@@ -65,9 +66,7 @@ class VisitJpaServiceTest {
     void findByIdNotFound() {
         when(visitRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Visit visitReturn = visitJpaService.findById(visitId);
-
-        assertNull(visitReturn);
+        assertThrows(NotFoundException.class, () -> visitJpaService.findById(visitId));
     }
 
     @Test

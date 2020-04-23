@@ -6,6 +6,7 @@ import com.simongirard.petclinic.model.PetType;
 import com.simongirard.petclinic.services.OwnerService;
 import com.simongirard.petclinic.services.PetService;
 import com.simongirard.petclinic.services.PetTypeService;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -42,7 +43,7 @@ public class PetController {
     }
 
     @ModelAttribute("owner")
-    public Owner findOwner(@PathVariable String ownerId) {
+    public Owner findOwner(@PathVariable String ownerId) throws NotFoundException {
         return ownerService.findById(Long.parseLong(ownerId));
     }
 
@@ -78,7 +79,7 @@ public class PetController {
     }
 
     @GetMapping("/pets/{petId}/edit")
-    public String initUpdateForm(@PathVariable String petId, Model model) {
+    public String initUpdateForm(@PathVariable String petId, Model model) throws NotFoundException {
         model.addAttribute("pet", petService.findById(Long.parseLong(petId)));
         return VIEWWS_PETS_CREATE_OR_UPDATE_FORM;
     }

@@ -3,6 +3,7 @@ package com.simongirard.petclinic.services.springdatajpa;
 import com.simongirard.petclinic.model.Speciality;
 import com.simongirard.petclinic.repositories.SpecialityRepository;
 import com.simongirard.petclinic.services.SpecialityService;
+import javassist.NotFoundException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,8 @@ public class SpecialityJpaService implements SpecialityService {
     }
 
     @Override
-    public Speciality findById(Long id) {
-        return specialityRepository.findById(id).orElse(null);
+    public Speciality findById(Long id) throws NotFoundException {
+        return specialityRepository.findById(id).orElseThrow(() -> new NotFoundException("Speciality not found. Speciality id: " + id));
     }
 
     @Override

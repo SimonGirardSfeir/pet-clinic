@@ -2,6 +2,7 @@ package com.simongirard.petclinic.services.springdatajpa;
 
 import com.simongirard.petclinic.model.Owner;
 import com.simongirard.petclinic.repositories.OwnerRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,7 +70,7 @@ class OwnerJpaServiceTest {
     }
 
     @Test
-    void findById() {
+    void findById() throws NotFoundException {
         when(ownerRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
         Owner ownerFound = ownerJpaService.findById(ownerId);
@@ -85,9 +86,7 @@ class OwnerJpaServiceTest {
     void findByIdNotFound() {
         when(ownerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Owner ownerFound = ownerJpaService.findById(ownerId);
-
-        assertNull(ownerFound);
+        assertThrows(NotFoundException.class, () -> ownerJpaService.findById(ownerId));
     }
 
     @Test

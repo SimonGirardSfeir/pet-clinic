@@ -3,6 +3,7 @@ package com.simongirard.petclinic.services.springdatajpa;
 import com.simongirard.petclinic.model.Vet;
 import com.simongirard.petclinic.repositories.VetRepository;
 import com.simongirard.petclinic.services.VetService;
+import javassist.NotFoundException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,8 @@ public class VetJpaService implements VetService {
     }
 
     @Override
-    public Vet findById(Long id) {
-        return vetRepository.findById(id).orElse(null);
+    public Vet findById(Long id) throws NotFoundException {
+        return vetRepository.findById(id).orElseThrow(() -> new NotFoundException("Vet not found. Vet id: " + id));
     }
 
     @Override

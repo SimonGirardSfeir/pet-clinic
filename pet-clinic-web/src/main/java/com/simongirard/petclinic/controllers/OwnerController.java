@@ -2,6 +2,7 @@ package com.simongirard.petclinic.controllers;
 
 import com.simongirard.petclinic.model.Owner;
 import com.simongirard.petclinic.services.OwnerService;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,7 +62,7 @@ public class OwnerController {
     }
 
     @GetMapping("/{ownerId}")
-    public ModelAndView showOwner(@PathVariable long ownerId) {
+    public ModelAndView showOwner(@PathVariable long ownerId) throws NotFoundException {
         ModelAndView modelAndView = new ModelAndView("owners/ownerDetails");
         modelAndView.addObject(ownerService.findById(ownerId));
 
@@ -87,7 +88,7 @@ public class OwnerController {
     }
 
     @GetMapping("/{ownerId}/edit")
-    public String initUpdateOwnerForm(@PathVariable String ownerId, Model model) {
+    public String initUpdateOwnerForm(@PathVariable String ownerId, Model model) throws NotFoundException {
         model.addAttribute("owner", ownerService.findById(Long.parseLong(ownerId)));
         return VIEWS_OWNER_VREATE_OR_UPDATE_FORM;
     }
