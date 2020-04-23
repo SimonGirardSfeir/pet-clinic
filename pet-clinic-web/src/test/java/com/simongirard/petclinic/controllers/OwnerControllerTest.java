@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -108,12 +109,27 @@ class OwnerControllerTest {
     void processCreationForm() throws Exception {
         when(ownerService.save(any())).thenReturn(Owner.builder().id(1L).build());
 
-        mockMvc.perform(post("/owners/new"))
+        mockMvc.perform(post("/owners/new").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                            .param("firstName", "Simon")
+                            .param("lastName", "Girard")
+                            .param("telephone", "0123456789")
+                            .param("address", "1 rue du Labrador")
+                            .param("city", "Paris"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/owners/1"))
                 .andExpect(model().attributeExists("owner"));
 
         verify(ownerService).save(any());
+    }
+
+    @Test
+    void processCreationFormFail() throws Exception {
+
+        mockMvc.perform(post("/owners/new"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+
+        verifyNoInteractions(ownerService);
     }
 
     @Test
@@ -132,11 +148,26 @@ class OwnerControllerTest {
     void processUpdateOwnerForm() throws Exception {
         when(ownerService.save(any())).thenReturn(Owner.builder().id(1L).build());
 
-        mockMvc.perform(post("/owners/1/edit"))
+        mockMvc.perform(post("/owners/1/edit").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("firstName", "Simon")
+                .param("lastName", "Girard")
+                .param("telephone", "0123456789")
+                .param("address", "1 rue du Labrador")
+                .param("city", "Paris"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/owners/1"))
                 .andExpect(model().attributeExists("owner"));
 
         verify(ownerService).save(any());
+    }
+
+    @Test
+    void processUpdateOwnerFormFail() throws Exception {
+
+        mockMvc.perform(post("/owners/1/edit"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+
+        verifyNoInteractions(ownerService);
     }
 }

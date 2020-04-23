@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Setter
@@ -35,6 +36,7 @@ public class Visit extends BaseEntity {
     private LocalDate date;
 
     @Column(name = "description")
+    @NotBlank
     private String description;
 
     @ManyToOne

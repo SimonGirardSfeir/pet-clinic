@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,12 +36,16 @@ public class Owner extends Person {
     }
 
     @Column(name = "address")
+    @NotBlank
     private String address;
 
     @Column(name = "city")
+    @NotBlank
     private String city;
 
     @Column(name = "telephone")
+    @NotBlank
+    @Digits(fraction = 0, integer = 10)
     private String telephone;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")

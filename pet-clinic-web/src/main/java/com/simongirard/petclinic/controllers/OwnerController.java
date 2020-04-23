@@ -94,7 +94,7 @@ public class OwnerController {
     }
 
     @PostMapping("/{ownerId}/edit")
-    public String processUpdateOwnerForm(@Valid @ModelAttribute Owner owner, @PathVariable String ownerId,  BindingResult result) {
+    public String processUpdateOwnerForm(@PathVariable String ownerId, @Valid @ModelAttribute Owner owner,  BindingResult result) {
         if(result.hasErrors()) {
             return VIEWS_OWNER_VREATE_OR_UPDATE_FORM;
         } else {

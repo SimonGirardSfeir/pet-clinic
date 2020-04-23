@@ -22,6 +22,7 @@ import java.util.HashSet;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -81,6 +82,19 @@ class VisitControllerTest {
                 .andExpect(model().attributeExists("visit"));
 
         verify(visitService).save(any());
+    }
+
+    @Test
+    void processNewvisitFormFail() throws Exception {
+
+        mockMvc.perform(post("/owners/1/pets/1/visits/new")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("date", "2018-11-11")
+                .param("description", "    "))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pets/createOrUpdateVisitForm"));
+
+        verifyNoInteractions(visitService);
     }
 
 
