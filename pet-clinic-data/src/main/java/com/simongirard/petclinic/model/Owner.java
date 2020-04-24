@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Setter
@@ -28,11 +29,7 @@ public class Owner extends Person {
         this.address = address;
         this.city = city;
         this.telephone = telephone;
-        if(pets != null) {
-            this.pets = pets;
-        } else {
-            this.pets = new HashSet<>();
-        }
+        this.pets = Objects.requireNonNullElseGet(pets, HashSet::new);
     }
 
     @Column(name = "address")

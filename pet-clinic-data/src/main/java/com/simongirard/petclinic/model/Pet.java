@@ -1,6 +1,5 @@
 package com.simongirard.petclinic.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,6 +39,7 @@ public class Pet extends NamedEntity {
 
     @ManyToOne
     @JoinColumn(name = "type_id")
+    @NotNull
     private PetType petType;
 
     @ManyToOne
@@ -46,6 +48,8 @@ public class Pet extends NamedEntity {
 
     @Column(name = "birth_day")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
+    @PastOrPresent
     private LocalDate birthDay;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pet")

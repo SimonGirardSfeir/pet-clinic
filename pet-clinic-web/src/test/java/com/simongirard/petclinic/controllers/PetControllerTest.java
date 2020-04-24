@@ -1,5 +1,6 @@
 package com.simongirard.petclinic.controllers;
 
+import com.simongirard.petclinic.formatters.PetTypeFormatter;
 import com.simongirard.petclinic.model.Owner;
 import com.simongirard.petclinic.model.Pet;
 import com.simongirard.petclinic.model.PetType;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -58,7 +60,10 @@ class PetControllerTest {
         petTypes.add(PetType.builder().id(1L).name("Dog").build());
         petTypes.add(PetType.builder().id(2L).name("Cat").build());
 
-        mockMvc = MockMvcBuilders.standaloneSetup(petController).build();
+        var conversionService = new DefaultFormattingConversionService();
+        conversionService.addFormatterForFieldType(PetType.class, new PetTypeFormatter(petTypeService));
+
+        mockMvc = MockMvcBuilders.standaloneSetup(petController).setConversionService(conversionService).build();
     }
 
     @Test
@@ -80,7 +85,8 @@ class PetControllerTest {
 
         mockMvc.perform(post("/owners/1/pets/new").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Médor")
-                .param("birthDay", "2015-01-01"))
+                .param("birthDay", "2015-01-01")
+                .param("petType", "Dog"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/owners/1"));
 
@@ -119,7 +125,8 @@ class PetControllerTest {
 
         mockMvc.perform(post("/owners/1/pets/2/edit").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Médor")
-                .param("birthDay", "2015-01-01"))
+                .param("birthDay", "2015-01-01")
+                .param("petType", "Dog"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/owners/1"));
 
