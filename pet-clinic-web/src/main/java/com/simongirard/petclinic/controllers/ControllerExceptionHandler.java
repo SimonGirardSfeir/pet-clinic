@@ -16,7 +16,7 @@ public class ControllerExceptionHandler {
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("error");
-        modelAndView.addObject("message", e);
+        modelAndView.addObject("message", e.getMessage());
         return modelAndView;
     }
 
@@ -25,7 +25,7 @@ public class ControllerExceptionHandler {
     public ModelAndView handleNumberFormatException(Exception e) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("error");
-        modelAndView.addObject("message", e);
+        modelAndView.addObject("message", e.getMessage());
         return modelAndView;
     }
 }

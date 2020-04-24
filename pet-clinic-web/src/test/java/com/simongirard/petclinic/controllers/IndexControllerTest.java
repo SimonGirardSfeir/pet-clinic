@@ -35,7 +35,7 @@ class IndexControllerTest {
     @Test
     void oups() throws Exception {
         mockMvc.perform(get("/oups"))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(view().name("error"));
     }
 }

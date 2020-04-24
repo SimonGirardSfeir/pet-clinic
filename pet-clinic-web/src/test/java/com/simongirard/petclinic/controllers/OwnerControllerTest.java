@@ -2,6 +2,7 @@ package com.simongirard.petclinic.controllers;
 
 import com.simongirard.petclinic.model.Owner;
 import com.simongirard.petclinic.services.OwnerService;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +44,7 @@ class OwnerControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(ownerController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(ownerController).setControllerAdvice(new ControllerExceptionHandler()).build();
     }
 
     @Test
@@ -142,6 +143,22 @@ class OwnerControllerTest {
                 .andExpect(model().attributeExists("owner"));
 
         verify(ownerService).findById(1L);
+    }
+
+    @Test
+    void initUpdateOwnerFormOwnerIDNumberFormatException() throws Exception {
+        mockMvc.perform(get("/owners/1a/edit"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("error"));
+    }
+
+    @Test
+    void initUpdateOwnerFormNotFound() throws Exception {
+        when(ownerService.findById(anyLong())).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/owners/1/edit"))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("error"));
     }
 
     @Test
