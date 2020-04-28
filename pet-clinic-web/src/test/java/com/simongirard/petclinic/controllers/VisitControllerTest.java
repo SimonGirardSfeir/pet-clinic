@@ -3,6 +3,7 @@ package com.simongirard.petclinic.controllers;
 import com.simongirard.petclinic.model.Owner;
 import com.simongirard.petclinic.model.Pet;
 import com.simongirard.petclinic.model.PetType;
+import com.simongirard.petclinic.model.Visit;
 import com.simongirard.petclinic.services.PetService;
 import com.simongirard.petclinic.services.VisitService;
 import javassist.NotFoundException;
@@ -45,8 +46,11 @@ class VisitControllerTest {
 
     private MockMvc mockMvc;
 
+    private Visit visit;
+
     @BeforeEach
     void setUp() throws NotFoundException {
+        visit = Visit.builder().id(1L).build();
         Owner owner = Owner.builder().id(1L).lastName("Girard").firstName("Simon").build();
         PetType petType = PetType.builder().id(1L).name("Dog").build();
 
@@ -63,7 +67,6 @@ class VisitControllerTest {
 
     @Test
     void initNewVisitForm() throws Exception {
-
         mockMvc.perform(get("/owners/1/pets/1/visits/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("pet"))
@@ -72,6 +75,7 @@ class VisitControllerTest {
 
     @Test
     void processNewvisitForm() throws Exception {
+        when(visitService.save(any())).thenReturn(visit);
 
         mockMvc.perform(post("/owners/1/pets/1/visits/new")
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -86,7 +90,6 @@ class VisitControllerTest {
 
     @Test
     void processNewvisitFormFail() throws Exception {
-
         mockMvc.perform(post("/owners/1/pets/1/visits/new")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("date", "2018-11-11")

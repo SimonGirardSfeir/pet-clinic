@@ -7,6 +7,7 @@ import com.simongirard.petclinic.model.PetType;
 import com.simongirard.petclinic.services.OwnerService;
 import com.simongirard.petclinic.services.PetService;
 import com.simongirard.petclinic.services.PetTypeService;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,14 +52,18 @@ class PetControllerTest {
 
     Owner owner;
     Set<PetType> petTypes;
+    Pet pet;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NotFoundException {
         owner = Owner.builder().id(1L).build();
+        pet = Pet.builder().id(1L).build();
 
         petTypes = new HashSet<>();
         petTypes.add(PetType.builder().id(1L).name("Dog").build());
         petTypes.add(PetType.builder().id(2L).name("Cat").build());
+
+        when(ownerService.findById(anyLong())).thenReturn(owner);
 
         var conversionService = new DefaultFormattingConversionService();
         conversionService.addFormatterForFieldType(PetType.class, new PetTypeFormatter(petTypeService));
@@ -68,7 +73,6 @@ class PetControllerTest {
 
     @Test
     void initCreationForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
         when(petTypeService.findAll()).thenReturn(petTypes);
 
         mockMvc.perform(get("/owners/1/pets/new"))
@@ -80,8 +84,8 @@ class PetControllerTest {
 
     @Test
     void processCreationForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
         when(petTypeService.findAll()).thenReturn(petTypes);
+        when(petService.save(any())).thenReturn(pet);
 
         mockMvc.perform(post("/owners/1/pets/new").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Médor")
@@ -96,8 +100,6 @@ class PetControllerTest {
 
     @Test
     void processCreationFormFail() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
-
         mockMvc.perform(post("/owners/1/pets/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pets/createOrUpdatePetForm"));
@@ -107,7 +109,6 @@ class PetControllerTest {
 
     @Test
     void initUpdateForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
         when(petTypeService.findAll()).thenReturn(petTypes);
         when(petService.findById(anyLong())).thenReturn(Pet.builder().id(2L).build());
 
@@ -120,8 +121,8 @@ class PetControllerTest {
 
     @Test
     void processUpdateForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
         when(petTypeService.findAll()).thenReturn(petTypes);
+        when(petService.save(any())).thenReturn(pet);
 
         mockMvc.perform(post("/owners/1/pets/2/edit").contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Médor")
@@ -135,8 +136,6 @@ class PetControllerTest {
 
     @Test
     void processUpdateFormFail() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
-
         mockMvc.perform(post("/owners/1/pets/2/edit"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pets/createOrUpdatePetForm"));
