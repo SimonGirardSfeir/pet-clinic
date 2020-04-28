@@ -7,6 +7,7 @@ import com.simongirard.petclinic.services.OwnerService;
 import com.simongirard.petclinic.services.PetService;
 import com.simongirard.petclinic.services.PetTypeService;
 import javassist.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.Valid;
 import java.util.Set;
 
+@Slf4j
 @Controller
 @RequestMapping("/owners/{ownerId}")
 public class PetController {
@@ -39,11 +41,15 @@ public class PetController {
 
     @ModelAttribute("types")
     public Set<PetType> populatePetTypes() {
+        log.info("Pet type populated");
+
         return petTypeService.findAll();
     }
 
     @ModelAttribute("owner")
     public Owner findOwner(@PathVariable String ownerId) throws NotFoundException {
+        log.info("Owner found with Id {}", ownerId);
+
         return ownerService.findById(Long.parseLong(ownerId));
     }
 
@@ -54,26 +60,39 @@ public class PetController {
 
     @GetMapping("/pets/new")
     public String initCreationForm(Owner owner, Model model) {
+        log.info("Pet creation page");
+
         model.addAttribute("owner", owner);
         Pet pet = Pet.builder().build();
         pet.setOwner(owner);
         owner.getPets().add(pet);
         model.addAttribute("pet", pet);
+
         return VIEWWS_PETS_CREATE_OR_UPDATE_FORM;
     }
 
     @PostMapping("/pets/new")
     public String processCreationForm(Owner owner, @Valid @ModelAttribute Pet pet, BindingResult result, Model model) {
         if(StringUtils.hasLength(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null) {
+            log.debug("Pet already exists");
+
             result.rejectValue("name", "duplicate", "already exists");
         }
+
         owner.getPets().add(pet);
         pet.setOwner(owner);
+
         if(result.hasErrors()){
+            result.getAllErrors().forEach( objectError -> log.debug(objectError.toString()));
+
             model.addAttribute("pet", pet);
+
             return VIEWWS_PETS_CREATE_OR_UPDATE_FORM;
         } else {
-            petService.save(pet);
+            Pet savedPet = petService.save(pet);
+
+            log.info("Pet saved. Pet with Id {}", savedPet.getId());
+
             return "redirect:/owners/" + owner.getId();
         }
     }
@@ -81,18 +100,27 @@ public class PetController {
     @GetMapping("/pets/{petId}/edit")
     public String initUpdateForm(@PathVariable String petId, Model model) throws NotFoundException {
         model.addAttribute("pet", petService.findById(Long.parseLong(petId)));
+
+        log.info("Pet edit page. Pet with Id {}", petId);
+
         return VIEWWS_PETS_CREATE_OR_UPDATE_FORM;
     }
 
     @PostMapping("/pets/{petId}/edit")
     public String processUpdateForm(Owner owner, @Valid @ModelAttribute Pet pet, BindingResult result, Model model) {
         if(result.hasErrors()){
+            result.getAllErrors().forEach( objectError -> log.debug(objectError.toString()));
+
             pet.setOwner(owner);
             model.addAttribute("pet", pet);
+
             return VIEWWS_PETS_CREATE_OR_UPDATE_FORM;
         } else {
             pet.setOwner(owner);
-            petService.save(pet);
+            Pet savedPet = petService.save(pet);
+
+            log.info("Pet saved. Pet with Id {}", savedPet.getId());
+
             return "redirect:/owners/" + owner.getId();
         }
     }

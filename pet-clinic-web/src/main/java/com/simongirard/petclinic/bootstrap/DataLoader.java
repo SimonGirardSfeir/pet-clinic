@@ -41,8 +41,6 @@ public class DataLoader implements CommandLineRunner
         if(count == 0) {
             loadData();
         }
-
-        System.out.println("All data loaded");
     }
 
     private void loadData() {

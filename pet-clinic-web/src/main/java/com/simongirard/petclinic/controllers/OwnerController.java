@@ -3,6 +3,7 @@ package com.simongirard.petclinic.controllers;
 import com.simongirard.petclinic.model.Owner;
 import com.simongirard.petclinic.services.OwnerService;
 import javassist.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RequestMapping("/owners")
 @Controller
 public class OwnerController {
@@ -36,7 +38,10 @@ public class OwnerController {
 
     @GetMapping("/find")
     public String findOwners(Model model) {
+        log.info("Owner search page");
+
         model.addAttribute("owner", Owner.builder().build());
+
         return "owners/findOwners";
     }
 
@@ -50,19 +55,30 @@ public class OwnerController {
         List<Owner> results = ownerService.findAllByLastNameLike("%" + owner.getLastName() + "%");
 
         if(results.isEmpty()) {
+            log.info("No owner with name containing {}", owner.getLastName());
+
             result.rejectValue("lastName", "notFound", "not found");
+
             return "owners/findOwners";
         } else if(results.size() == 1) {
+            log.info("Details page of owner with Id {}", owner.getId());
+
             owner = results.get(0);
+
             return "redirect:/owners/"+owner.getId();
         } else {
+            log.info("All owner with name containing {}", owner.getLastName());
+
             model.addAttribute("selections", results);
+
             return "owners/ownersList";
         }
     }
 
     @GetMapping("/{ownerId}")
     public ModelAndView showOwner(@PathVariable long ownerId) throws NotFoundException {
+        log.info("Details page of owner with Id {}", ownerId);
+
         ModelAndView modelAndView = new ModelAndView("owners/ownerDetails");
         modelAndView.addObject(ownerService.findById(ownerId));
 
@@ -71,6 +87,8 @@ public class OwnerController {
 
     @GetMapping("/new")
     public String initCreationForm(Model model) {
+        log.info("Owner creation page");
+
         model.addAttribute("owner", Owner.builder().build());
 
         return VIEWS_OWNER_VREATE_OR_UPDATE_FORM;
@@ -79,9 +97,13 @@ public class OwnerController {
     @PostMapping("/new")
     public String processCreationForm(@Valid @ModelAttribute Owner owner, BindingResult result) {
         if(result.hasErrors()) {
+            result.getAllErrors().forEach( objectError -> log.debug(objectError.toString()));
+
             return VIEWS_OWNER_VREATE_OR_UPDATE_FORM;
         } else {
             Owner savedOwner = ownerService.save(owner);
+
+            log.info("Owner saved. Owner with Id {}", savedOwner.getId());
 
             return "redirect:/owners/"+savedOwner.getId();
         }
@@ -89,17 +111,24 @@ public class OwnerController {
 
     @GetMapping("/{ownerId}/edit")
     public String initUpdateOwnerForm(@PathVariable String ownerId, Model model) throws NotFoundException {
+        log.info("Owner edit page. Owner with Id {}", ownerId);
+
         model.addAttribute("owner", ownerService.findById(Long.parseLong(ownerId)));
+
         return VIEWS_OWNER_VREATE_OR_UPDATE_FORM;
     }
 
     @PostMapping("/{ownerId}/edit")
     public String processUpdateOwnerForm(@PathVariable String ownerId, @Valid @ModelAttribute Owner owner,  BindingResult result) {
         if(result.hasErrors()) {
+            result.getAllErrors().forEach( objectError -> log.debug(objectError.toString()));
+
             return VIEWS_OWNER_VREATE_OR_UPDATE_FORM;
         } else {
             owner.setId(Long.parseLong(ownerId));
             Owner savedOwner = ownerService.save(owner);
+
+            log.info("Owner edited. Owner with Id {}", savedOwner.getId());
 
             return "redirect:/owners/"+savedOwner.getId();
         }
