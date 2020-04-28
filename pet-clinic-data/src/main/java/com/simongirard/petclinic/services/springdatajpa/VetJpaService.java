@@ -4,9 +4,11 @@ import com.simongirard.petclinic.model.Vet;
 import com.simongirard.petclinic.repositories.VetRepository;
 import com.simongirard.petclinic.services.VetService;
 import javassist.NotFoundException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +28,8 @@ public class VetJpaService implements VetService {
     }
 
     @Override
+    @Transactional
+    @Cacheable(value = "vets", key = "#root.methodName")
     public Set<Vet> findAll() {
         Set<Vet> vets = new HashSet<>();
 

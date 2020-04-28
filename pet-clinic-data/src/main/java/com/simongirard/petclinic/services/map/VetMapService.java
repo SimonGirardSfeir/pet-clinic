@@ -4,6 +4,7 @@ import com.simongirard.petclinic.model.Speciality;
 import com.simongirard.petclinic.model.Vet;
 import com.simongirard.petclinic.services.SpecialityService;
 import com.simongirard.petclinic.services.VetService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class VetMapService extends AbstractMapService<Vet, Long> implements VetS
     }
 
     @Override
+    @Cacheable(value = "vets", key = "#root.methodName")
     public Set<Vet> findAll() {
         return super.findAll();
     }
