@@ -74,7 +74,7 @@
                 <version>2.22.2</version>
                 <configuration>
                     <argLine>
-                        --illegal-access=permit
+                        ${jaCoCoArgLine} --illegal-access=permit
                     </argLine>
                 </configuration>
             </plugin>
@@ -84,7 +84,7 @@
                 <version>2.22.2</version>
                 <configuration>
                     <argLine>
-                        --illegal-access=permit
+                        ${jaCoCoArgLine} --illegal-access=permit
                     </argLine>
                 </configuration>
                 <executions>
@@ -96,9 +96,51 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <configuration>
+                    <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+                    <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <propertyName>jaCoCoArgLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
     <scm>
         <developerConnection>scm:git:git@github.com:SimonGirardSfeir/pet-clinic.git</developerConnection>
       <tag>HEAD</tag>
