@@ -17,6 +17,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,17 +33,17 @@ class PetTypeJpaServiceTest {
     private Long petTypeId = 1L;
 
     private PetType petType;
+    private Set<PetType> petTypes;
 
     @BeforeEach
     void setUp() {
         petType = PetType.builder().id(petTypeId).build();
+        petTypes = new HashSet<>();
+        petTypes.add(petType);
     }
 
     @Test
     void findAll() {
-        Set<PetType> petTypes = new HashSet<>();
-        petTypes.add(petType);
-
         when(petTypeRepository.findAll()).thenReturn(petTypes);
 
         Set<PetType> petTypesReturn = petTypeJpaService.findAll();
@@ -61,7 +62,7 @@ class PetTypeJpaServiceTest {
         assertNotNull(petTypeFound);
         assertEquals(petTypeId, petTypeFound.getId());
 
-        verify(petTypeRepository).findById(petTypeId);
+        verify(petTypeRepository).findById(eq(petTypeId));
     }
 
     @Test
@@ -73,7 +74,7 @@ class PetTypeJpaServiceTest {
 
     @Test
     void save() {
-        PetType petTypeToSave = PetType.builder().id(1L).build();
+        PetType petTypeToSave = PetType.builder().build();
 
         when(petTypeRepository.save(any())).thenReturn(petType);
 
@@ -82,20 +83,20 @@ class PetTypeJpaServiceTest {
         assertNotNull(petTypeSaved);
         assertEquals(petType, petTypeSaved);
 
-        verify(petTypeRepository).save(petTypeToSave);
+        verify(petTypeRepository).save(eq(petTypeToSave));
     }
 
     @Test
     void delete() {
         petTypeJpaService.delete(petType);
 
-        verify(petTypeRepository).delete(petType);
+        verify(petTypeRepository).delete(eq(petType));
     }
 
     @Test
     void deleteById() {
         petTypeJpaService.deleteById(petTypeId);
 
-        verify(petTypeRepository).deleteById(petTypeId);
+        verify(petTypeRepository).deleteById(eq(petTypeId));
     }
 }

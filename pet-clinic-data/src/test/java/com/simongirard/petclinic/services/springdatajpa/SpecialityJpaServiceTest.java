@@ -17,6 +17,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,17 +33,17 @@ class SpecialityJpaServiceTest {
     private Long specialityId = 1L;
 
     private Speciality speciality;
+    private Set<Speciality> specialities;
 
     @BeforeEach
     void setUp() {
         speciality = Speciality.builder().id(specialityId).build();
+        specialities = new HashSet<>();
+        specialities.add(speciality);
     }
 
     @Test
     void findAll() {
-        Set<Speciality> specialities = new HashSet<>();
-        specialities.add(speciality);
-
         when(specialityRepository.findAll()).thenReturn(specialities);
 
         Set<Speciality> specialitiesReturn = specialityJpaService.findAll();
@@ -60,19 +61,19 @@ class SpecialityJpaServiceTest {
         assertNotNull(specialityReturn);
         assertEquals(speciality, specialityReturn);
 
-        verify(specialityRepository).findById(specialityId);
+        verify(specialityRepository).findById(eq(specialityId));
     }
 
     @Test
     void findByIdNotFound() {
         when(specialityRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> specialityJpaService.findById(specialityId));
+        assertThrows(NotFoundException.class, () -> specialityJpaService.findById(eq(specialityId)));
     }
 
     @Test
     void save() {
-        Speciality specialityToSave = Speciality.builder().id(1L).build();
+        Speciality specialityToSave = Speciality.builder().build();
 
         when(specialityRepository.save(any())).thenReturn(speciality);
 
@@ -81,20 +82,20 @@ class SpecialityJpaServiceTest {
         assertNotNull(specialitySaved);
         assertEquals(speciality, specialitySaved);
 
-        verify(specialityRepository).save(specialityToSave);
+        verify(specialityRepository).save(eq(specialityToSave));
     }
 
     @Test
     void delete() {
         specialityJpaService.delete(speciality);
 
-        verify(specialityRepository).delete(speciality);
+        verify(specialityRepository).delete(eq(speciality));
     }
 
     @Test
     void deleteById() {
         specialityJpaService.deleteById(specialityId);
 
-        verify(specialityRepository).deleteById(specialityId);
+        verify(specialityRepository).deleteById(eq(specialityId));
     }
 }

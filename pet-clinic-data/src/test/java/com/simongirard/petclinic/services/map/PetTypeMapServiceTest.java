@@ -36,7 +36,6 @@ class PetTypeMapServiceTest {
 
     @Test
     void save() {
-
         PetType petType = petTypeMapService.save(PetType.builder().id(2L).build());
 
         assertEquals(2L, petType.getId());

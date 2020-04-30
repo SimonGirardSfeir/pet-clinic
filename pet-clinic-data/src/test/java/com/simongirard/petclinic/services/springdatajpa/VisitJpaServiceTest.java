@@ -17,6 +17,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,17 +33,17 @@ class VisitJpaServiceTest {
     private Long visitId = 1L;
 
     private Visit visit;
+    private Set<Visit> visits;
 
     @BeforeEach
     void setUp() {
         visit = Visit.builder().id(visitId).build();
+        visits = new HashSet<>();
+        visits.add(visit);
     }
 
     @Test
     void findAll() {
-        Set<Visit> visits = new HashSet<>();
-        visits.add(visit);
-
         when(visitRepository.findAll()).thenReturn(visits);
 
         Set<Visit> visitsReturn = visitJpaService.findAll();
@@ -59,7 +60,7 @@ class VisitJpaServiceTest {
 
         assertNotNull(visitReturn);
         assertEquals(visit, visitReturn);
-        verify(visitRepository).findById(visitId);
+        verify(visitRepository).findById(eq(visitId));
     }
 
     @Test
@@ -71,7 +72,7 @@ class VisitJpaServiceTest {
 
     @Test
     void save() {
-        Visit visitToSave = Visit.builder().id(1L).build();
+        Visit visitToSave = Visit.builder().build();
 
         when(visitRepository.save(any())).thenReturn(visit);
 
@@ -79,20 +80,20 @@ class VisitJpaServiceTest {
 
         assertNotNull(visitSaved);
         assertEquals(visit, visitSaved);
-        verify(visitRepository).save(visitToSave);
+        verify(visitRepository).save(eq(visitToSave));
     }
 
     @Test
     void delete() {
         visitJpaService.delete(visit);
 
-        verify(visitRepository).delete(visit);
+        verify(visitRepository).delete(eq(visit));
     }
 
     @Test
     void deleteById() {
         visitJpaService.deleteById(visitId);
 
-        verify(visitRepository).deleteById(visitId);
+        verify(visitRepository).deleteById(eq(visitId));
     }
 }

@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,7 +48,6 @@ class OwnerMapServiceTest {
 
     @Test
     void findById() {
-
         Owner owner = ownerMapService.findById(ownerId);
 
         assertEquals(ownerId, owner.getId());
@@ -129,7 +129,6 @@ class OwnerMapServiceTest {
 
     @Test
     void findByLastName() {
-
         Owner owner3 = ownerMapService.findByLastName(lastName);
 
         assertNotNull(owner3);
@@ -138,9 +137,15 @@ class OwnerMapServiceTest {
 
     @Test
     void findByLastNameNotFound() {
-
         Owner owner4 = ownerMapService.findByLastName("Dupond");
 
         assertNull(owner4);
+    }
+
+    @Test
+    void findByLastNameLike() {
+        List<Owner> owners = ownerMapService.findAllByLastNameLike(lastName);
+
+        assertEquals(1, owners.size());
     }
 }

@@ -17,6 +17,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,22 +33,23 @@ class PetJpaServiceTest {
     private Long petId = 1L;
 
     private Pet pet;
+    private Set<Pet> pets;
 
     @BeforeEach
     void setUp() {
         pet = Pet.builder().id(petId).build();
+        pets = new HashSet<>();
+        pets.add(pet);
     }
 
     @Test
     void findAll() {
-        Set<Pet> pets = new HashSet<>();
-        pets.add(pet);
-
         when(petRepository.findAll()).thenReturn(pets);
 
         Set<Pet> returnPets = petJpaService.findAll();
 
         assertEquals(1, returnPets.size());
+
         verify(petRepository).findAll();
     }
 
@@ -60,7 +62,7 @@ class PetJpaServiceTest {
         assertNotNull(petFound);
         assertEquals(petId, petFound.getId());
 
-        verify(petRepository).findById(petId);
+        verify(petRepository).findById(eq(petId));
     }
 
     @Test
@@ -72,7 +74,7 @@ class PetJpaServiceTest {
 
     @Test
     void save() {
-        Pet petToSave = Pet.builder().id(1L).build();
+        Pet petToSave = Pet.builder().build();
 
         when(petRepository.save(any())).thenReturn(pet);
 
@@ -81,20 +83,20 @@ class PetJpaServiceTest {
         assertNotNull(petSaved);
         assertEquals(pet, petSaved);
 
-        verify(petRepository).save(petToSave);
+        verify(petRepository).save(eq(petToSave));
     }
 
     @Test
     void delete() {
         petJpaService.delete(pet);
 
-        verify(petRepository).delete(pet);
+        verify(petRepository).delete(eq(pet));
     }
 
     @Test
     void deleteById() {
         petJpaService.deleteById(petId);
 
-        verify(petRepository).deleteById(petId);
+        verify(petRepository).deleteById(eq(petId));
     }
 }

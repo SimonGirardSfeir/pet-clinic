@@ -42,7 +42,6 @@ class VisitMapServiceTest {
 
     @Test
     void save() {
-
         Pet pet = Pet.builder().id(4L).build();
 
         Owner owner = Owner.builder().id(5L).build();

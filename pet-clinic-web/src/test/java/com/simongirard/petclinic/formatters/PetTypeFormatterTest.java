@@ -21,14 +21,16 @@ class PetTypeFormatterTest {
 
     private PetTypeFormatter petTypeFormatter;
 
-    private Set<PetType> petTypes;
-
     @Mock
     private PetTypeService petTypeService;
+
+    private PetType petTypeDog;
+    private Set<PetType> petTypes;
 
     @BeforeEach
     void setUp() {
         petTypeFormatter = new PetTypeFormatter(petTypeService);
+        petTypeDog = PetType.builder().id(1L).name("Dog").build();
         petTypes = new HashSet<>();
         petTypes.add(PetType.builder().id(1L).name("Dog").build());
         petTypes.add(PetType.builder().id(2L).name("Cat").build());
@@ -36,9 +38,7 @@ class PetTypeFormatterTest {
 
     @Test
     void printTest() {
-        PetType petType = PetType.builder().id(1L).name("Dog").build();
-
-        String petTypeName = petTypeFormatter.print(petType, Locale.ENGLISH);
+        String petTypeName = petTypeFormatter.print(petTypeDog, Locale.ENGLISH);
 
         assertEquals("Dog", petTypeName);
     }
@@ -46,10 +46,10 @@ class PetTypeFormatterTest {
     void parseTest() throws ParseException {
         when(petTypeService.findAll()).thenReturn(petTypes);
 
-        PetType petType = petTypeFormatter.parse("Cat", Locale.ENGLISH);
+        PetType petTypeReturn = petTypeFormatter.parse("Cat", Locale.ENGLISH);
 
-        assertEquals("Cat", petType.getName());
-        assertEquals(2L, petType.getId());
+        assertEquals("Cat", petTypeReturn.getName());
+        assertEquals(2L, petTypeReturn.getId());
     }
 
     @Test

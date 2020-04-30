@@ -10,7 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,15 +38,19 @@ class OwnerJpaServiceTest {
 
     private Owner owner;
 
+    private Set<Owner> owners;
 
     @BeforeEach
     void setUp() {
         owner = Owner.builder().id(ownerId).lastName(lastName).build();
+        owners = new HashSet<>();
+        owners.add(Owner.builder().id(1L).build());
+        owners.add(Owner.builder().id(2L).build());
     }
 
     @Test
-    void findByLastName() {
-        when(ownerRepository.findByLastName(any())).thenReturn(owner);
+    void findByLastName() throws NotFoundException {
+        when(ownerRepository.findByLastName(any())).thenReturn(Optional.of(owner));
 
         Owner foundOwner = ownerJpaService.findByLastName(lastName);
 
@@ -55,11 +61,25 @@ class OwnerJpaServiceTest {
     }
 
     @Test
-    void findAll() {
-        Set<Owner> owners = new HashSet<>();
-        owners.add(Owner.builder().id(1L).build());
-        owners.add(Owner.builder().id(2L).build());
+    void findByLastNameNotFound() {
+        when(ownerRepository.findByLastName(any())).thenReturn(Optional.empty());
 
+        assertThrows(NotFoundException.class, () -> ownerJpaService.findByLastName(lastName));
+    }
+
+    @Test
+    void findByLastNameLike() {
+        when(ownerRepository.findAllByLastNameLike(any())).thenReturn(Collections.singletonList(owner));
+
+        List<Owner> foundOwners = ownerJpaService.findAllByLastNameLike(lastName);
+
+        assertEquals(Collections.singletonList(owner), foundOwners);
+
+        verify(ownerRepository).findAllByLastNameLike(eq(lastName));
+    }
+
+    @Test
+    void findAll() {
         when(ownerRepository.findAll()).thenReturn(owners);
 
         Set<Owner> ownersReturn = ownerJpaService.findAll();

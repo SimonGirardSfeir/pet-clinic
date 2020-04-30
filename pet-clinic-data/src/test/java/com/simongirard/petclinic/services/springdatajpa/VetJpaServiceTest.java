@@ -17,6 +17,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,10 +35,13 @@ class VetJpaServiceTest {
     private String lastName = "Dupond";
 
     private Vet vet;
+    private Set<Vet> vets;
 
     @BeforeEach
     void setUp() {
         vet = Vet.builder().id(vetId).lastName(lastName).build();
+        vets = new HashSet<>();
+        vets.add(vet);
     }
 
     @Test
@@ -48,14 +52,11 @@ class VetJpaServiceTest {
 
         assertEquals(vetId, vetReturn.getId());
         assertEquals(lastName, vetReturn.getLastName());
-        verify(vetRepository).findByLastName(lastName);
+        verify(vetRepository).findByLastName(eq(lastName));
     }
 
     @Test
     void findAll() {
-        Set<Vet> vets = new HashSet<>();
-        vets.add(vet);
-
         when(vetRepository.findAll()).thenReturn(vets);
 
         Set<Vet> vetsReturn = vetJpaService.findAll();
@@ -72,7 +73,7 @@ class VetJpaServiceTest {
 
         assertNotNull(vetReturn);
         assertEquals(vet, vetReturn);
-        verify(vetRepository).findById(vetId);
+        verify(vetRepository).findById(eq(vetId));
     }
 
     @Test
@@ -84,7 +85,7 @@ class VetJpaServiceTest {
 
     @Test
     void save() {
-        Vet vetToSave = Vet.builder().id(1L).lastName(lastName).build();
+        Vet vetToSave = Vet.builder().lastName(lastName).build();
 
         when(vetRepository.save(any())).thenReturn(vet);
 
@@ -92,20 +93,20 @@ class VetJpaServiceTest {
 
         assertNotNull(savedVet);
         assertEquals(vet, savedVet);
-        verify(vetRepository).save(vetToSave);
+        verify(vetRepository).save(eq(vetToSave));
     }
 
     @Test
     void delete() {
         vetJpaService.delete(vet);
 
-        verify(vetRepository).delete(vet);
+        verify(vetRepository).delete(eq(vet));
     }
 
     @Test
     void deleteById() {
         vetJpaService.deleteById(vetId);
 
-        verify(vetRepository).deleteById(vetId);
+        verify(vetRepository).deleteById(eq(vetId));
     }
 }
