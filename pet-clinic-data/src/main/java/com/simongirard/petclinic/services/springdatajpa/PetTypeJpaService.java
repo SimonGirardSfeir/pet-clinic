@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@Profile("jpa")
+@Profile({"jpa", "mysql"})
 public class PetTypeJpaService implements PetTypeService {
 
 

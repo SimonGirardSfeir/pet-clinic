@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  pet-clinic-db:
+    restart: always
+    container_name: pet-clinic-db
+    image: mysql:8.0.20
+    ports:
+    - "6033:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_USER=petclinic
+      - MYSQL_PASSWORD=petclinic
+      - MYSQL_DATABASE=petclinic
+    volumes:
+    - "./src/main/resources/db/mysql:/docker-entrypoint-initdb.d"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 2s
+      timeout: 20s
+      retries: 10
+  pet-clinic-application:
+    build: ./
+    ports:
+    - "8080:8080"
+    environment:
+      WAIT_HOSTS: mysql:8.0.20:3306
+    depends_on:
+      - pet-clinic-db
